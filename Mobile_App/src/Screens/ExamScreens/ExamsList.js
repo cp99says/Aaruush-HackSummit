@@ -4,6 +4,7 @@ import {
     Text,
     SafeAreaView,
     StyleSheet,
+    RefreshControl,
     FlatList,
     TouchableOpacity,
     StatusBar,
@@ -17,13 +18,10 @@ import {API_CALL} from "../../Functions/ApiFunctions";
 import {Loader} from "../../Components/Components";
 import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
 
-function Header() {
-    return <View style={{width: wp(100), height: 80, backgroundColor: COLORS.PURPLE}}></View>;
-}
-
 function ExamList({navigation}) {
     const [allexamData, setAllExamData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         initPageLoadEvents();
@@ -38,7 +36,7 @@ function ExamList({navigation}) {
         try {
             const data = await API_CALL(
                 {
-                    url: "/api/teacher/exam/history/abcd",
+                    url: "/api/teacher/exam/history/chetan",
                     method: "get",
                 },
                 {type: "ML"}
@@ -50,6 +48,7 @@ function ExamList({navigation}) {
             console.log(error);
         }
         setLoading(false);
+        setRefreshing(false);
     }
     const renderItemFunc = ({item}) => (
         <View
@@ -132,6 +131,16 @@ function ExamList({navigation}) {
             <View style={styles.mainContainer}>
                 <FlatList
                     data={allexamData}
+                    refreshControl={
+                        <RefreshControl
+                            colors={[COLORS.PURPLE]}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                                setRefreshing(true);
+                                initPageLoadEvents();
+                            }}
+                        />
+                    }
                     numColumns={2}
                     renderItem={renderItemFunc}
                     keyExtractor={item => item.exam_code}

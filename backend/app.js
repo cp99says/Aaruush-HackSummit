@@ -15,6 +15,7 @@ mongoose.connect(
     console.log(`connected to mongoDB atlas`);
   }
 );
+
 app.use(cors());
 app.get("/", (req, res) => {
   res.send("server is up at AZURE!!");

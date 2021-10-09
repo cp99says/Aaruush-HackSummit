@@ -8,6 +8,7 @@ import {
     ImageBackground,
     Animated,
     FlatList,
+    RefreshControl,
     Image,
     TouchableOpacity,
 } from "react-native";
@@ -20,9 +21,11 @@ import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
 import {API_CALL} from "../../Functions/ApiFunctions";
 import {Loader} from "../../Components/Components";
 
-export default function SubjectScreen({route}) {
+export default function SubjectScreen({navigation, route}) {
     const [examData, setexamData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
     useEffect(() => {
         initPageLoadEvents();
     }, []);
@@ -44,12 +47,13 @@ export default function SubjectScreen({route}) {
                 {type: "ML"}
             );
             // console.log("data.data", data.data)
-            console.log(data);
+            // console.log(data);
             setexamData(data.history);
         } catch (error) {
             console.log(error);
         }
         setLoading(false);
+        setRefreshing(false);
     }
     const renderItemFunc = ({item}) => (
         <View
@@ -58,11 +62,12 @@ export default function SubjectScreen({route}) {
                 flexDirection: "column",
                 margin: 10,
                 marginVertical: 8.8,
+                alignItems: "center",
             }}
         >
             <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate("ExamPreview", {data: item});
+                    navigation.navigate("SubjectExamPreview", {data: item});
                 }}
                 style={styles.card}
             >
@@ -82,7 +87,8 @@ export default function SubjectScreen({route}) {
                             textTransform: "uppercase",
                         }}
                     >
-                        #{item.exam_code}
+                        {/* #{item.exam_code} */}
+                        {item.topic_name}
                     </Text>
                     <View
                         style={{
@@ -93,7 +99,7 @@ export default function SubjectScreen({route}) {
                         }}
                     />
                 </View>
-                <View style={{flex: 1, marginTop: "10%"}}>
+                <View style={{flex: 1, marginTop: "5%"}}>
                     <Text
                         style={{
                             fontFamily: "Montserrat-Medium",
@@ -102,10 +108,10 @@ export default function SubjectScreen({route}) {
                             textTransform: "uppercase",
                         }}
                     >
-                        {item.exam_topic}
+                        {item.subject}
                     </Text>
                 </View>
-                <View style={{flex: 1, marginTop: "10%"}}>
+                <View style={{flex: 1, marginTop: "5%"}}>
                     <Text
                         style={{
                             fontFamily: "Montserrat-Medium",
@@ -132,7 +138,17 @@ export default function SubjectScreen({route}) {
             <View style={styles.mainContainer}>
                 <FlatList
                     data={examData}
-                    numColumns={2}
+                    refreshControl={
+                        <RefreshControl
+                            colors={[COLORS.PURPLE]}
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                                setRefreshing(true);
+                                initPageLoadEvents();
+                            }}
+                        />
+                    }
+                    contentContainerStyle={{paddingBottom: 120}}
                     renderItem={renderItemFunc}
                     keyExtractor={item => item.exam_code}
                 />
@@ -168,7 +184,7 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: COLORS.WHITE,
-        width: wp(45),
+        width: wp(90),
         height: "auto",
         elevation: 4,
         borderRadius: 8,
