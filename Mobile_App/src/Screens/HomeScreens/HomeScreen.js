@@ -20,11 +20,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import {ExamCard, SubjectCard} from "../../Components/HomeScreenComponents";
 import ImagePicker from "react-native-image-crop-picker";
 import DocumentPicker from "react-native-document-picker";
-import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
+import {FocusAwareStatusBar, showNotification} from "../../Functions/AppFunctions";
 const HomeScreen = ({navigation}) => {
     const [fadeAnimation, setFadeAnimation] = useState(new Animated.Value(0));
     const [fadeAnimationImage, setFadeAnimationImage] = useState(new Animated.Value(0));
     const requestCameraPermission = async () => {
+        let status = false;
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -40,15 +41,16 @@ const HomeScreen = ({navigation}) => {
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 // console.log("You can use the camera");
+                status = true;
             } else {
                 console.log("Camera permission denied");
             }
         } catch (err) {
             console.warn(err);
         }
+        return status;
     };
     useEffect(() => {
-        requestCameraPermission();
         fadeIn();
     }, []);
     const fadeIn = () => {
@@ -63,15 +65,23 @@ const HomeScreen = ({navigation}) => {
             useNativeDriver: true,
         }).start();
     };
-    function OpenCamera() {
-        console.log("CALLED");
-        ImagePicker.openCamera({
-            width: 300,
-            height: 400,
-            cropping: true,
-        }).then(image => {
-            console.log(image);
-        });
+    async function OpenCamera() {
+        const status = await requestCameraPermission();
+        if (status) {
+            ImagePicker.openCamera({
+                width: 300,
+                height: 400,
+                cropping: true,
+            })
+                .then(image => {
+                    console.log(image);
+                })
+                .catch(error => {
+                    showNotification("Cancelled");
+                });
+        } else {
+            showNotification("Camera permission denied");
+        }
     }
     async function OpenFilePicker() {
         try {

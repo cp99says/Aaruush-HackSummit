@@ -110,13 +110,125 @@ function ExamPreview({route}) {
         });
         toggleModal();
     }
+    async function editQuestionPaper() {
+        const exam_code = data.exam_code;
+        const payload = data;
+
+        try {
+            const data = await API_CALL(
+                {
+                    url: `/api/teacher/exam/${exam_code}`,
+                    method: "patch",
+                    data: payload,
+                },
+                {type: "ML"}
+            );
+            // console.log("data.data", data.data)
+            if (data.status) {
+                showNotification("Exam details updated");
+            } else {
+                showNotification("Error occurred");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async function toogleExamActivation() {
+        const exam_code = data.exam_code;
+        const payload = data;
+        payload.exam_started = !payload.exam_started;
+
+        console.log("val", payload.exam_started);
+        try {
+            const data = await API_CALL(
+                {
+                    url: `/api/teacher/exam/${exam_code}`,
+                    method: "patch",
+                    data: payload,
+                },
+                {type: "ML"}
+            );
+            // console.log("data.data", data.data)
+            if (data.status) {
+                if (payload.exam_started) {
+                    showNotification("Exam activated successfully");
+                } else {
+                    showNotification("Exam deactivated ");
+                }
+            } else {
+                showNotification("Error occurred");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <>
             <FocusAwareStatusBar backgroundColor={COLORS.HEADER_GREY} />
+            <View style={{flex: 0.1, backgroundColor: COLORS.WHITE, justifyContent: "center"}}>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                    }}
+                >
+                    <TouchableOpacity
+                        style={{
+                            paddingVertical: 8,
+                            paddingHorizontal: 4,
+                            borderRadius: 6,
+                            justifyContent: "center",
+                            width: wp(44),
+                            borderColor: COLORS.PURPLE,
+                            borderWidth: 1,
+                        }}
+                        onPress={() => {
+                            editQuestionPaper();
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontFamily: "Montserrat-Medium",
+                                color: COLORS.PURPLE,
+                                fontSize: 14,
+                                alignSelf: "center",
+                            }}
+                        >
+                            Save Changes
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            paddingVertical: 9.2,
+                            paddingHorizontal: 6,
+                            borderRadius: 6,
+                            justifyContent: "center",
+                            width: wp(40),
+                            backgroundColor: COLORS.PURPLE,
+                        }}
+                        onPress={() => {
+                            toogleExamActivation();
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontFamily: "Montserrat-Medium",
+                                color: COLORS.WHITE,
+                                fontSize: 14,
+                                alignSelf: "center",
+                            }}
+                        >
+                            {!data.exam_started ? "Activate Exam" : "Deactivate Exam"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
             <View style={styles.mainContainer}>
                 {isModalVisible ? <StatusBar backgroundColor={COLORS.PURPLE_LIGHT} /> : null}
+
                 <FlatList
-                    contentContainerStyle={{paddingBottom: "5%"}}
+                    contentContainerStyle={{paddingBottom: 120}}
                     data={data.questions}
                     renderItem={renderItemFunc}
                     keyExtractor={item => item.question_id}
@@ -248,8 +360,7 @@ export default ExamPreview;
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-
-        paddingTop: "2%",
+        paddingTop: "1.2%",
         // paddingBottom: "5%",
     },
     card: {
