@@ -15,18 +15,7 @@ mongoose.connect(
     console.log(`connected to mongoDB atlas`);
   }
 );
-// // mongoose.connect(
-// //   "mongodb+srv://localhost:27017/HackRx2",
-// //   {
-// //     useNewUrlParser: true,
-// //     useUnifiedTopology: true,
-// //     useCreateIndex: true,
-// //     useFindAndModify: true,
-// //   },
-// //   () => {
-// //     console.log(`connected to mongoDB atlas`);
-// //   }
-// // );
+
 app.use(cors());
 app.get("/", (req, res) => {
   res.send("server is up at AZURE!!");
