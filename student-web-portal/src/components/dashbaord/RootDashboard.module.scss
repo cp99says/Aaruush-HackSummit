@@ -4,6 +4,7 @@
     height: 100vh;
     display: flex;
     .controller {
+        min-width: 250px;
         cursor: pointer;
         width: fit-content;
         height: fit-content;
