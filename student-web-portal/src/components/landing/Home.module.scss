@@ -1,0 +1,16 @@
+@import "../shared/colors.scss";
+.wrapper {
+    background-color: $PEACH;
+    position: relative;
+    height: 100vh; //remove later
+    .heroImageContainer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 0;
+        width: 650px;
+        height: 600px;
+        border-bottom-left-radius: 150px;
+        background-color: rgba($color: $GREEN, $alpha: 0.56);
+    }
+}
