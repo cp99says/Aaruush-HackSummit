@@ -1,51 +1,51 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
-    SafeAreaView,
+    TextInput,
     StyleSheet,
-    FlatList,
-    TouchableOpacity,
     StatusBar,
+    ImageBackground,
+    Animated,
+    FlatList,
+    Image,
+    TouchableOpacity,
 } from "react-native";
 import {COLORS} from "../../Constants/GlobalStyle";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
 import {API_CALL} from "../../Functions/ApiFunctions";
 import {Loader} from "../../Components/Components";
-import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
 
-function Header() {
-    return <View style={{width: wp(100), height: 80, backgroundColor: COLORS.PURPLE}}></View>;
-}
-
-function ExamList({navigation}) {
-    const [allexamData, setAllExamData] = useState([]);
+export default function SubjectScreen({route}) {
+    const [examData, setexamData] = useState([]);
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         initPageLoadEvents();
     }, []);
     async function initPageLoadEvents(params) {
-        const examsData = await getAllExams();
-        if (examsData) {
+        const val = await getExamData();
+        if (val) {
         }
     }
 
-    async function getAllExams(params) {
+    async function getExamData(params) {
+        const {data} = route.params;
+        let subjectName = data;
         try {
             const data = await API_CALL(
                 {
-                    url: "/api/teacher/exam/history/abcd",
+                    url: `/api/teacher/exam/subjectwise/${subjectName}`,
                     method: "get",
                 },
                 {type: "ML"}
             );
             // console.log("data.data", data.data)
             console.log(data);
-            setAllExamData(data.history);
+            setexamData(data.history);
         } catch (error) {
             console.log(error);
         }
@@ -120,6 +120,7 @@ function ExamList({navigation}) {
             </TouchableOpacity>
         </View>
     );
+
     return loading ? (
         <>
             <FocusAwareStatusBar backgroundColor={COLORS.HEADER_GREY} />
@@ -127,11 +128,10 @@ function ExamList({navigation}) {
         </>
     ) : (
         <>
-            {/* <Header /> */}
             <FocusAwareStatusBar backgroundColor={COLORS.HEADER_GREY} />
             <View style={styles.mainContainer}>
                 <FlatList
-                    data={allexamData}
+                    data={examData}
                     numColumns={2}
                     renderItem={renderItemFunc}
                     keyExtractor={item => item.exam_code}
@@ -140,7 +140,6 @@ function ExamList({navigation}) {
         </>
     );
 }
-export default ExamList;
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
