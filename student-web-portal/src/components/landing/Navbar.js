@@ -18,15 +18,6 @@ export default function Navbar() {
           <p>About</p>
           <p>Team</p>
         </div>
-        <div className={styles.controllers}>
-          <button className={styles.login}>Login</button>
-          <Button
-            name="Sign Up"
-            width="150px"
-            backgroundColor={colors.PRIMARY}
-            textColor={colors.PEACH}
-          />
-        </div>
       </div>
     </div>
   );
