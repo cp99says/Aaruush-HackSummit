@@ -5,6 +5,7 @@ app.use(express.json());
 var aws = require("aws-sdk");
 var bodyParser = require("body-parser");
 const multer = require("multer");
+const moment = require("moment");
 const multerS3 = require("multer-s3");
 // require("dotenv/config");
 
@@ -26,12 +27,20 @@ var upload = multer({
   }),
 });
 
-app.post("/file", upload.array("file", 1), function (req, res, next) {
+app.post("/file", upload.array("file", 1), async function (req, res, next) {
   //   console.log(file);
 
-  name = name.replace(/ /g, "+");
-  console.log(`https://hacksummit.s3.ap-south-1.amazonaws.com/${name}`);
-  res.send("file uploaded");
+  try {
+    name = name.replace(/ /g, "+");
+    var file_url = `https://hacksummit.s3.ap-south-1.amazonaws.com/${name}`;
+    res.status(200).json({
+      file_upload_status: "success",
+      file_url,
+    });
+    console.log("sucees");
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = app;

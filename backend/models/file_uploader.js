@@ -4,10 +4,10 @@ const schema = mongoose.Schema({
     required: true,
     type: String,
   },
-  date_uploaded: {
-    required: true,
-    type: String,
-  },
+  //   date_uploaded: {
+  //     required: true,
+  //     type: String,
+  //   },
 });
 
 module.exports = mongoose.model("File Data", schema);
