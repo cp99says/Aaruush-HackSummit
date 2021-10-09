@@ -13,6 +13,7 @@ export function API_CALL(config, {type}) {
     const API_Config = Object.assign({}, config, {
         url: `${BASE_URL}${config.url}`,
     });
+    console.log(API_Config);
 
     return axios(API_Config)
         .then(response => {
