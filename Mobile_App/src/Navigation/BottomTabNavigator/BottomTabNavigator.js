@@ -7,6 +7,7 @@ import {ExamStackNavigator} from "../HomeNavigators/ExamNavigator";
 import Icon, {Icons} from "../../Components/Icons";
 import {COLORS} from "../../Constants/GlobalStyle";
 import * as Animatable from "react-native-animatable";
+import {HomeStackNavigator} from "../HomeNavigators/HomeNavigator";
 
 function SettingsScreen() {
     return (
@@ -91,7 +92,7 @@ const TabArr = [
         type: Icons.MaterialIcons,
         activeIcon: "dashboard",
         inActiveIcon: "grid-outline",
-        component: HomeScreen,
+        component: HomeStackNavigator,
     },
     {
         route: "examsList",
