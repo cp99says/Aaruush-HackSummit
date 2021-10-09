@@ -2,9 +2,9 @@
   <p align='center'> 
    <img src="media/pariksha.png" height="70"/><br><br>
    
-   <img src="https://forthebadge.com/images/badges/built-with-love.svg"/><br>
-   <img src="https://img.shields.io/badge/By-Team%20ZeroDSA-seagreen?style=for-the-badge" />
-   <img src="https://img.shields.io/badge/Aaruush-Hacksummit%202.0-red?style=for-the-badge" />
+   <img src="https://forthebadge.com/images/badges/built-with-love.svg"/><br><br>
+   <img src="https://img.shields.io/badge/By-Team%20ZeroDSA-seagreen?style=for-the-badge" height="40"/><br>
+   <img src="https://img.shields.io/badge/Aaruush-Hacksummit%202.0-red?style=for-the-badge" height="40"/>
     <br>   
   </p>
   <hr>
@@ -17,7 +17,7 @@
  <div align="center"> 
     <p>
     <img src="https://img.shields.io/badge/Why%20%7C%20What%20it%20does-darkslategrey?logo=Windows%20Terminal&style=for-the-badge" height="55"/></p>
-    <img src="media/approach.png" />
+    <img src="media/solution.png" />
   <br><br>
  </div>
 
@@ -31,9 +31,11 @@
 
 <div align="center"> 
   <img src="https://img.shields.io/badge/Product%20Images-mediumseagreen?logo=Pinterest&style=for-the-badge" height="55" /><br><br>
-  <img src="media/mockup1.jpg" />
-  <img src="media/mockup2.jpg" />
-  <img src="media/mockup3.jpg" />
+  <p float="left">
+    <img src="media/login.png" width="280" />
+    <img src="media/app-dash.png" width="280" /> 
+    <img src="media/qp.png" width="280" />
+  </p>
 </div>
 <br>
 
@@ -150,10 +152,7 @@
   - Express
     
     Deployment
-    - Azure
-    
-    Open Source APIs
-    - https://rapidapi.com/digitallyamar/api/distance-calculator1(Distance Calculating API)
+    - Azure    
     
    ```
   <div>
