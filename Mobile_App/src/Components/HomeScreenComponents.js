@@ -17,9 +17,9 @@ import {
 } from "react-native-responsive-screen";
 
 export function SubjectCard(props) {
-    const {imageSource, Title, Style} = props;
+    const {imageSource, Title, Style, onPress} = props;
     return (
-        <View style={styles.cardContainer}>
+        <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
             <Image style={Style ? Style : styles.imageStyle} source={imageSource} />
             <Text
                 style={{
@@ -33,7 +33,7 @@ export function SubjectCard(props) {
             >
                 {Title}
             </Text>
-        </View>
+        </TouchableOpacity>
     );
 }
 

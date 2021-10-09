@@ -21,7 +21,7 @@ import {ExamCard, SubjectCard} from "../../Components/HomeScreenComponents";
 import ImagePicker from "react-native-image-crop-picker";
 import DocumentPicker from "react-native-document-picker";
 import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
     const [fadeAnimation, setFadeAnimation] = useState(new Animated.Value(0));
     const [fadeAnimationImage, setFadeAnimationImage] = useState(new Animated.Value(0));
     const requestCameraPermission = async () => {
@@ -137,6 +137,9 @@ const HomeScreen = () => {
                         <SubjectCard
                             imageSource={require("../../Assets/Images/chem.png")}
                             Title={"Chemistry"}
+                            onPress={() => {
+                                navigation.navigate("SubjectScreen", {data: "Chemistry"});
+                            }}
                             Style={{
                                 height: 50,
                                 alignSelf: "center",
@@ -145,6 +148,9 @@ const HomeScreen = () => {
                             }}
                         />
                         <SubjectCard
+                            onPress={() => {
+                                navigation.navigate("SubjectScreen", {data: "Physics"});
+                            }}
                             imageSource={require("../../Assets/Images/physics1.png")}
                             Title={"Physics"}
                         />
