@@ -85,3 +85,49 @@ async def getkeytopics(img_details: Upload_Object):
     sentences = tokenize_sentences(img_text)
     keyword_sentence_mapping = get_sentences_for_keyword(keyphrases, sentences)
     return keyword_sentence_mapping
+
+@app.get('/examination/{code}')
+async def get_questions(code: str):
+    exam_details = await exam.find_one({'exam_code': code},{'_id': 0})
+    return exam_details
+
+@app.post('/getanswers')
+async def get_answers(answer_gen: AnswerGen):
+    context = convert_img2text(answer_gen.blob_url)
+    answer = ans({
+    "question": answer_gen.question,
+    "context": context
+    })
+    
+    return {"status":200, "question": answer_gen.question, "answer": answer}
+
+
+@app.put('/response/{code}')
+async def update_responses(code: str, res_schema: ResponseSchema):
+    response_details = await response.find_one({'exam_code': code},{'_id': 0})
+    if response_details:        
+        response_details["response"].append(jsonable_encoder(res_schema))
+        print(response_details)
+        updated_response = await response.update_one({'exam_code': code}, {"$set": response_details})
+        if updated_response:
+            return {'status': 200, "message": "Your response has been updated"}
+        
+    return {'status': 404, "message": "Response details not found"}
+
+
+@app.get('/answerkey/{code}')
+async def get_answer_key(code: str):
+    exam_details = await exam.find_one({'exam_code': code},{'_id': 0})
+    if exam_details:
+        return {"status": 200, "questions": exam_details['questions']}
+    
+    return {"status": 404, "message": "No results found"}
+
+@app.get('/question/answerkey/{code}/{question_id}')
+async def get_question_answer(code: str, question_id: str):
+    exam_details = await exam.find_one({'exam_code': code},{'_id': 0})
+    for ques_details in exam_details['questions']:
+        if ques_details['answer_key_id'] == str(question_id + code):
+            return {'status': 200, 'answer': ques_details['answer']}
+        
+    return {"status": 404, "message": "No results found"}
