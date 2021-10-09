@@ -21,7 +21,9 @@ var upload = multer({
     s3: s3,
     bucket: "hacksummit",
     key: function (req, file, cb) {
+      console.log(file);
       name = file.originalname;
+      // console.log(name);
       cb(null, file.originalname);
     },
   }),
@@ -32,6 +34,7 @@ app.post("/file", upload.array("file", 1), async function (req, res, next) {
 
   try {
     name = name.replace(/ /g, "+");
+    // console.log(file);
     var file_url = `https://hacksummit.s3.ap-south-1.amazonaws.com/${name}`;
     console.log(file_url);
     res.status(200).json({
