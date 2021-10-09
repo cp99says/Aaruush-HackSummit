@@ -48,3 +48,40 @@ class ResponseSchema(BaseModel):
 app = APIRouter()
 
 
+@app.post('/keytopics', status_code = 200)
+async def getkeytopics(img_details: Upload_Object):
+    img_text = convert_img2text(img_details.blob_url)    
+    extractor = pke.unsupervised.TopicRank()
+    extractor.load_document(input=img_text, language='en_core_web_sm')
+    extractor.candidate_selection()
+    extractor.candidate_weighting()
+    keyphrases = extractor.get_n_best(n=10)
+    keyphrases = [keyphrase[0] for keyphrase in keyphrases]
+    
+
+    def tokenize_sentences(text):
+        sentences = [sent_tokenize(text)]
+        sentences = [y for x in sentences for y in x]
+        sentences = [sentence.strip() for sentence in sentences if len(sentence) > 20]
+        return sentences
+
+    def get_sentences_for_keyword(keywords, sentences):
+        keyword_processor = KeywordProcessor()
+        keyword_sentences = {}
+        for word in keywords:
+            keyword_sentences[word] = []
+            keyword_processor.add_keyword(word)
+        for sentence in sentences:
+            keywords_found = keyword_processor.extract_keywords(sentence)
+            for key in keywords_found:
+                keyword_sentences[key].append(sentence)
+
+        for key in keyword_sentences.keys():
+            values = keyword_sentences[key]
+            values = sorted(values, key=len, reverse=True)
+            keyword_sentences[key] = values
+        return keyword_sentences
+
+    sentences = tokenize_sentences(img_text)
+    keyword_sentence_mapping = get_sentences_for_keyword(keyphrases, sentences)
+    return keyword_sentence_mapping
