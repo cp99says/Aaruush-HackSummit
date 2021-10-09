@@ -1,0 +1,40 @@
+@import "../shared/colors.scss";
+.wrapper {
+    margin-left: 20px;
+    width: calc;
+    .globalTimer {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        font-weight: 500;
+        color: $ORANGE;
+        margin-bottom: 110px;
+        svg {
+            width: 18px;
+            margin-right: 6px;
+        }
+    }
+    .questionContainer {
+        width: 765px;
+        margin-bottom: 20px;
+        p {
+            font-size: 14px;
+            font-weight: 500;
+            color: $TEXT;
+        }
+    }
+    .answerInput {
+        width: 765px;
+        form {
+            width: 100%;
+            textarea {
+                width: 100%;
+                height: 150px;
+                resize: none;
+                border: 1px solid $PRIMARY;
+                border-radius: 5px;
+                color: $TEXT;
+            }
+        }
+    }
+}
