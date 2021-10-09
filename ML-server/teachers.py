@@ -47,3 +47,35 @@ class ExamSchema(BaseModel):
     questions : list
 
 # class MarksSchema(BaseModel):
+
+app = APIRouter()
+
+@app.post('/similarity', status_code = 200)
+async def check_similarity(sim: Similarity):
+    '''
+    Check the similarity of two strings. We use this to get the simialrity score ot of 10
+    '''
+    original = sim.original
+    response = sim.response
+    score = fuzz.token_sort_ratio(original, response)/10
+    return {'status': 200, 'score': score}
+
+'''
+final_dict = {'exam_code': '3e32f',
+ 'exam_started': False,
+ 'teacher_id': 'abcd',
+ 'total_questions': 2,
+ 'exam_type': 'subjective',
+ 'questions': [{'answer': 'Python',
+   'question': 'What is a high-level, general-purpose programming language?',
+   'question_id': '40818',
+   'answer_key_id': '408183e32f'},
+  {'answer': 'Guido van Rossum',
+   'question': 'Who created Python?',
+   'question_id': '84911',
+   'answer_key_id': '849113e32f'}]}
+response_dict = {'exam_code': '37143',
+  'teacher_id': 'abcd',
+  'exam_date': '2021-10-04',
+  'response': []}
+'''
