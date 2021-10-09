@@ -24,7 +24,7 @@
 <div align="center"> 
     <p>
     <img src="https://img.shields.io/badge/system%20architecture-moccasin?logo=Databricks&style=for-the-badge" height="55"/></p>
-    <img src="media/Sys_Arch.png" />
+    <img src="media/hld.png" />
   <br><br>
  </div>
 

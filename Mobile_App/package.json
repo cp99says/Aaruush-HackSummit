@@ -22,6 +22,7 @@
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-image-crop-picker": "^0.36.4",
     "react-native-modal": "^13.0.0",
+    "react-native-push-notification": "^8.1.1",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.8.0",
