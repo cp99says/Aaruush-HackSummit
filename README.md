@@ -32,9 +32,9 @@
 <div align="center"> 
   <img src="https://img.shields.io/badge/Product%20Images-mediumseagreen?logo=Pinterest&style=for-the-badge" height="55" /><br><br>
   <p float="left">
-    <img src="media/login.png" width="280" />
-    <img src="media/app-dash.png" width="280" /> 
-    <img src="media/qp.png" width="280" />
+    <img src="media/login.png" width="220" />
+    <img src="media/app-dash.png" width="220" /> 
+    <img src="media/qp.png" width="220" />
   </p>
 </div>
 <br>
