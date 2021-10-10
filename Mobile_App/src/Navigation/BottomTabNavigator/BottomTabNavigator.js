@@ -2,20 +2,12 @@ import React, {useEffect, useRef} from "react";
 import {Text, View, StyleSheet, TouchableOpacity} from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import HomeScreen from "../../Screens/HomeScreens/HomeScreen";
 import {ExamStackNavigator} from "../HomeNavigators/ExamNavigator";
 import Icon, {Icons} from "../../Components/Icons";
 import {COLORS} from "../../Constants/GlobalStyle";
 import * as Animatable from "react-native-animatable";
 import {HomeStackNavigator} from "../HomeNavigators/HomeNavigator";
-
-function SettingsScreen() {
-    return (
-        <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-            <Text>Settings!</Text>
-        </View>
-    );
-}
+import AccountScreen from "../../Screens/AccountScreens/Account";
 
 const Tab = createBottomTabNavigator();
 const animateVal1 = {0: {scale: 0.8, translateY: 0}, 1: {scale: 1.2, translateY: -22}};
@@ -108,7 +100,7 @@ const TabArr = [
         type: Icons.MaterialCommunityIcons,
         activeIcon: "account",
         inActiveIcon: "timeline-plus-outline",
-        component: SettingsScreen,
+        component: AccountScreen,
     },
 ];
 export function BottomTab() {

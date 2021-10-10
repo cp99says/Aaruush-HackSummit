@@ -16,7 +16,7 @@ import {
     heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-const OnBoarding = () => {
+const OnBoarding = ({navigation}) => {
     const [fadeAnimation, setFadeAnimation] = useState(new Animated.Value(0));
     const [fadeAnimationImage, setFadeAnimationImage] = useState(new Animated.Value(0));
 
@@ -66,12 +66,22 @@ const OnBoarding = () => {
                         />
                     </View>
                     <View style={styles.container2}>
-                        <TouchableOpacity style={styles.buttonRegister}>
+                        <TouchableOpacity
+                            style={styles.buttonRegister}
+                            onPress={() => {
+                                navigation.navigate("RegisterScreen");
+                            }}
+                        >
                             <Text style={{textAlign: "center", color: COLORS.WHITE}}>
                                 Get Started
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonLogin}>
+                        <TouchableOpacity
+                            style={styles.buttonLogin}
+                            onPress={() => {
+                                navigation.navigate("LoginScreen");
+                            }}
+                        >
                             <Text style={{textAlign: "center", color: COLORS.WHITE}}>Log In</Text>
                         </TouchableOpacity>
                     </View>

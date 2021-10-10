@@ -20,6 +20,7 @@ import {
 import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
 import {API_CALL} from "../../Functions/ApiFunctions";
 import {Loader} from "../../Components/Components";
+import Store from "../../Store/Store";
 
 export default function SubjectScreen({navigation, route}) {
     const [examData, setexamData] = useState([]);
@@ -41,14 +42,18 @@ export default function SubjectScreen({navigation, route}) {
         try {
             const data = await API_CALL(
                 {
-                    url: `/api/teacher/exam/subjectwise/${subjectName}`,
+                    url: `/api/teacher/exam/subjectwise/${subjectName}/${Store.teacherIdVal}`,
                     method: "get",
                 },
                 {type: "ML"}
             );
             // console.log("data.data", data.data)
-            // console.log(data);
-            setexamData(data.history);
+            console.log(data);
+            if (data.status == 404) {
+                setexamData([]);
+            } else {
+                setexamData(data.history);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -108,7 +113,7 @@ export default function SubjectScreen({navigation, route}) {
                             textTransform: "uppercase",
                         }}
                     >
-                        {item.subject}
+                        {item.subject} (#{item.exam_code})
                     </Text>
                 </View>
                 <View style={{flex: 1, marginTop: "5%"}}>
@@ -136,22 +141,39 @@ export default function SubjectScreen({navigation, route}) {
         <>
             <FocusAwareStatusBar backgroundColor={COLORS.HEADER_GREY} />
             <View style={styles.mainContainer}>
-                <FlatList
-                    data={examData}
-                    refreshControl={
-                        <RefreshControl
-                            colors={[COLORS.PURPLE]}
-                            refreshing={refreshing}
-                            onRefresh={() => {
-                                setRefreshing(true);
-                                initPageLoadEvents();
+                {examData.length == 0 ? (
+                    <View style={{flex: 1, justifyContent: "center"}}>
+                        <Text
+                            style={{
+                                alignSelf: "center",
+                                fontFamily: "Montserrat-Bold",
+                                color: COLORS.PURPLE,
+                                marginTop: "-20%",
+                                fontSize: 16,
+                                textTransform: "uppercase",
                             }}
-                        />
-                    }
-                    contentContainerStyle={{paddingBottom: 120}}
-                    renderItem={renderItemFunc}
-                    keyExtractor={item => item.exam_code}
-                />
+                        >
+                            No Exams Found
+                        </Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={examData}
+                        refreshControl={
+                            <RefreshControl
+                                colors={[COLORS.PURPLE]}
+                                refreshing={refreshing}
+                                onRefresh={() => {
+                                    setRefreshing(true);
+                                    initPageLoadEvents();
+                                }}
+                            />
+                        }
+                        contentContainerStyle={{paddingBottom: 120}}
+                        renderItem={renderItemFunc}
+                        keyExtractor={item => item.exam_code}
+                    />
+                )}
             </View>
         </>
     );
