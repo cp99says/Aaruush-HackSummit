@@ -3,7 +3,7 @@ import styles from "./Sidebar.module.scss";
 
 import { useLocation, useHistory } from "react-router-dom";
 
-import { BookOpen, CheckSquare, PieChart } from "react-feather";
+import { BookOpen, CheckSquare, PieChart, Star } from "react-feather";
 
 import logo from "assets/logo.png";
 
@@ -40,9 +40,12 @@ export default function Sidebar() {
           <CheckSquare />
           Preparation
         </button>
-        {/* <button>
-          <PieChart /> Analysis
-        </button> */}
+        <button
+          onClick={routeTo.bind(this, "/dashboard/answers")}
+          className={currRoute === "answers" && styles.active}
+        >
+          <Star /> Answer Key
+        </button>
       </div>
     </div>
   );
