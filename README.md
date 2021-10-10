@@ -35,7 +35,8 @@
     <img src="media/login.png" width="220" />
     <img src="media/app-dash.png" width="220" /> 
     <img src="media/qp.png" width="220" />
-  </p>
+  </p><br>
+   <img src="media/web.jpeg" />
 </div>
 <br>
 
