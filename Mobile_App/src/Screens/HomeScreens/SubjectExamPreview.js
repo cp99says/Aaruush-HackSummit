@@ -68,6 +68,7 @@ export default function SubjectExamPreview({route}) {
     const [examData, setexamData] = useState([]);
     const [rowData, setRowData] = useState([]);
     const [colData, setColData] = useState([]);
+    const [averageScore, setAverageScore] = useState("");
 
     useEffect(() => {
         initPageLoadEvents();
@@ -78,8 +79,32 @@ export default function SubjectExamPreview({route}) {
         if (val) {
         }
     }
+    async function getAverageScore() {
+        let status = false;
+        const {data} = route.params;
+        let examCode = data.exam_code;
+        try {
+            const data = await API_CALL(
+                {
+                    url: `/api/teacher/exam/average/${examCode}`,
+                    method: "get",
+                },
+                {type: "ML"}
+            );
+            // console.log("data.data", data.data)
+            console.log("GET Average SCORE", data);
+            if (data.status == 200) {
+                setAverageScore(data.average);
+                status = true;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return status;
+    }
 
     async function getExamData(params) {
+        let status = false;
         const {data} = route.params;
         let examCode = data.exam_code;
         try {
@@ -90,23 +115,46 @@ export default function SubjectExamPreview({route}) {
                 },
                 {type: "ML"}
             );
-            // console.log("data.data", data.data)
-            // console.log(data);
 
             if (data.student_grades) {
+                const dataVal = await getAverageScore();
+                if (dataVal) {
+                    status = true;
+                }
                 setexamData(data.student_grades);
                 let colData = [];
                 let rowData = [];
                 data.student_grades.forEach(data => {
-                    rowData.push([data.student_username, data.score]);
+                    rowData.push([data.student_username, data.score.toFixed(2)]);
                 });
                 // setColData(colData);
                 setRowData(rowData);
+            } else {
+                // const {data} = route.params;
+                // let examCode = data.exam_code;
+                try {
+                    const data = await API_CALL(
+                        {
+                            url: `/api/teacher/exam/scores/${examCode}`,
+                            method: "put",
+                        },
+                        {type: "ML"}
+                    );
+                    // console.log("data.data", data.data)
+                    console.log("GET EXAM SCORE", data, examCode);
+                    status = true;
+                } catch (error) {
+                    status = true;
+                    console.log(error);
+                }
             }
         } catch (error) {
             console.log(error);
+            status = true;
         }
-        setLoading(false);
+        if (status) {
+            setLoading(false);
+        }
         setRefreshing(false);
     }
     const renderItemFunc = ({item}) => (
@@ -193,7 +241,7 @@ export default function SubjectExamPreview({route}) {
                             alignSelf: "center",
                             fontFamily: "Montserrat-Bold",
                             color: COLORS.PURPLE,
-                            marginTop: "88%",
+                            marginTop: "85%",
                             fontSize: 16,
                             textTransform: "uppercase",
                         }}
@@ -203,6 +251,26 @@ export default function SubjectExamPreview({route}) {
                 </View>
             ) : (
                 <View style={{paddingHorizontal: 20, marginTop: "10%"}}>
+                    {averageScore != "" ? (
+                        <Text
+                            style={{
+                                alignSelf: "flex-end",
+                                fontFamily: "Montserrat-Bold",
+                                color: COLORS.PURPLE,
+                                marginBottom: 40,
+                                marginTop: -20,
+                                marginRight: 2.2,
+                                borderWidth: 1,
+                                paddingHorizontal: 16,
+                                paddingVertical: 10,
+                                fontSize: 16,
+                                borderRadius: 5,
+                                borderColor: COLORS.PURPLE_LIGHT,
+                            }}
+                        >
+                            Average Score : {averageScore}
+                        </Text>
+                    ) : null}
                     <Table borderStyle={{borderWidth: 1}}>
                         <Row
                             data={state.tableHead}
@@ -221,23 +289,6 @@ export default function SubjectExamPreview({route}) {
                     </Table>
                 </View>
             )}
-            {/*
-            <FlatList
-                data={examData}
-                refreshControl={
-                    <RefreshControl
-                        colors={[COLORS.PURPLE]}
-                        refreshing={refreshing}
-                        onRefresh={() => {
-                            setRefreshing(true);
-                            initPageLoadEvents();
-                        }}
-                    />
-                }
-                contentContainerStyle={{paddingBottom: 120}}
-                renderItem={renderItemFunc}
-                keyExtractor={item => item.score}
-            /> */}
         </ScrollView>
     );
 }
