@@ -42,7 +42,7 @@ exports.student_registration = async (req, res) => {
     const data = new student({
       username: username,
       email: email,
-      student_id: nanoid(),
+      student_id: nano,
       password: hashedPassword,
     });
     const _data = await data.save();
