@@ -30,6 +30,7 @@ import {
 } from "../../Functions/AppFunctions";
 import {API_CALL} from "../../Functions/ApiFunctions";
 import {Loader} from "../../Components/Components";
+import Store from "../../Store/Store";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = require("react-native-extra-dimensions-android").get("REAL_WINDOW_HEIGHT");
@@ -93,9 +94,10 @@ const HomeScreen = ({navigation}) => {
         const status = await requestCameraPermission();
         if (status) {
             ImagePicker.openCamera({
-                width: 300,
-                height: 400,
+                width: 800,
+                height: 600,
                 cropping: true,
+                freeStyleCropEnabled: true,
             })
                 .then(image => {
                     setLoading(true);
@@ -180,7 +182,7 @@ const HomeScreen = ({navigation}) => {
             try {
                 const data = await API_CALL(
                     {
-                        url: `/api/teacher/initexam/chetan`,
+                        url: `/api/teacher/initexam/${Store.teacherIdVal}`,
                         method: "post",
                         data: {
                             blob_url: imageUrl,
@@ -394,7 +396,7 @@ const HomeScreen = ({navigation}) => {
                     <Text style={{fontSize: hp(4), color: COLORS.PURPLE}}>
                         Hello,{"\n"}
                         <Text style={{fontSize: hp(4), color: COLORS.PURPLE, fontWeight: "bold"}}>
-                            Chetan 😀
+                            {Store.usernameVal} 😀
                         </Text>
                     </Text>
                 </View>
