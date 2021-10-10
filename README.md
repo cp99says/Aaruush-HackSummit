@@ -24,7 +24,7 @@
 <div align="center"> 
     <p>
     <img src="https://img.shields.io/badge/system%20architecture-moccasin?logo=Databricks&style=for-the-badge" height="55"/></p>
-    <img src="media/Sys_Arch.png" />
+    <img src="media/hld.png" />
   <br><br>
  </div>
 
@@ -159,7 +159,7 @@
 
   <h3>API Documentation:</h3>
 
-  <a href="https://api.chetanpareek.tech/api-docs/"> https://api.chetanpareek.tech/api-docs/ </a><br>
+  <a href="https://api.cp99says.in/"> https://api.cp99says.in/ </a><br>
 
   </div>
 

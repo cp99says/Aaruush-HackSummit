@@ -4,12 +4,10 @@ app.use(express.json());
 const cors = require("cors");
 const mongoose = require("mongoose");
 mongoose.connect(
-  "mongodb+srv://sd2001:sddb@cluster0.ck7q8.mongodb.net/Pariksha?retryWrites=true&w=majority",
+  "mongodb+srv://sd2001:sddb@cluster0.ck7q8.mongodb.net/Hacksummit_DB?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: true,
   },
   () => {
     console.log(`connected to mongoDB atlas`);
@@ -21,6 +19,8 @@ app.get("/", (req, res) => {
   res.send("server is up at AZURE!!");
 });
 const api = require("./controllers/uploader");
+const routes = require("./routes/routes");
+app.use("/api", routes);
 app.use("/upload", api);
 const PORT = 4500;
 app.listen(PORT, () => {

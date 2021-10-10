@@ -40,6 +40,7 @@
                         border: 1px solid $PRIMARY;
                         border-radius: 5px;
                         color: $TEXT;
+                        padding: 5px;
                     }
                 }
             }
@@ -73,6 +74,24 @@
                     width: 100%;
                 }
             }
+        }
+    }
+}
+
+.submitModal {
+    padding: 0 20px 20px 20px;
+    p {
+        font-size: 18px;
+        font-weight: 500;
+        color: $TEXT;
+        margin-bottom: 10px;
+    }
+    .controllers {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        button {
+            margin-right: 20px;
         }
     }
 }

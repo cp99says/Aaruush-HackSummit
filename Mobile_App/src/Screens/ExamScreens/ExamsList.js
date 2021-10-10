@@ -17,6 +17,7 @@ import {
 import {API_CALL} from "../../Functions/ApiFunctions";
 import {Loader} from "../../Components/Components";
 import {FocusAwareStatusBar} from "../../Functions/AppFunctions";
+import Store from "../../Store/Store";
 
 function ExamList({navigation}) {
     const [allexamData, setAllExamData] = useState([]);
@@ -36,14 +37,18 @@ function ExamList({navigation}) {
         try {
             const data = await API_CALL(
                 {
-                    url: "/api/teacher/exam/history/chetan",
+                    url: `/api/teacher/exam/history/${Store.teacherIdVal}`,
                     method: "get",
                 },
                 {type: "ML"}
             );
-            // console.log("data.data", data.data)
-            console.log(data);
-            setAllExamData(data.history);
+            console.log("data.data", data);
+
+            if (data.status == 404) {
+                setAllExamData([]);
+            } else {
+                setAllExamData(data.history);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -97,11 +102,11 @@ function ExamList({navigation}) {
                         style={{
                             fontFamily: "Montserrat-Medium",
                             color: COLORS.PURPLE,
-                            fontSize: 14,
+                            fontSize: 12.5,
                             textTransform: "uppercase",
                         }}
                     >
-                        {item.exam_topic}
+                        {item.topic_name}
                     </Text>
                 </View>
                 <View style={{flex: 1, marginTop: "10%"}}>
@@ -129,22 +134,40 @@ function ExamList({navigation}) {
             {/* <Header /> */}
             <FocusAwareStatusBar backgroundColor={COLORS.HEADER_GREY} />
             <View style={styles.mainContainer}>
-                <FlatList
-                    data={allexamData}
-                    refreshControl={
-                        <RefreshControl
-                            colors={[COLORS.PURPLE]}
-                            refreshing={refreshing}
-                            onRefresh={() => {
-                                setRefreshing(true);
-                                initPageLoadEvents();
+                {allexamData.length == 0 ? (
+                    <View style={{flex: 1, justifyContent: "center"}}>
+                        <Text
+                            style={{
+                                alignSelf: "center",
+                                fontFamily: "Montserrat-Bold",
+                                color: COLORS.PURPLE,
+                                marginTop: "-20%",
+                                fontSize: 16,
+                                textTransform: "uppercase",
                             }}
-                        />
-                    }
-                    numColumns={2}
-                    renderItem={renderItemFunc}
-                    keyExtractor={item => item.exam_code}
-                />
+                        >
+                            No Exams Found
+                        </Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={allexamData}
+                        contentContainerStyle={{paddingBottom: 120}}
+                        refreshControl={
+                            <RefreshControl
+                                colors={[COLORS.PURPLE]}
+                                refreshing={refreshing}
+                                onRefresh={() => {
+                                    setRefreshing(true);
+                                    initPageLoadEvents();
+                                }}
+                            />
+                        }
+                        numColumns={2}
+                        renderItem={renderItemFunc}
+                        keyExtractor={item => item.exam_code}
+                    />
+                )}
             </View>
         </>
     );
