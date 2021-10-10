@@ -157,6 +157,12 @@
    ```
   <div>
 
+  <h3>API Documentation:</h3>
+
+  <a href="https://api.cp99says.in/"> https://api.cp99says.in/ </a><br>
+
+  </div>
+
 
   
   #### Native | Android
