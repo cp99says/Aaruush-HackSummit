@@ -55,12 +55,7 @@ export default function Exam() {
         }
         break;
       case "next":
-        if (responses[questionIterator]) {
-          setShowResponse(responses[questionIterator].response);
-        }
-        setQuestionIterator((prev) => {
-          return prev + 1;
-        });
+        setQuestionIterator((prev) => prev + 1);
         break;
       default:
         return 0;
@@ -105,7 +100,7 @@ export default function Exam() {
       student_username: "cp99says",
       answers: updateResponses,
     };
-    putRequest(`/api/students/response/${params.examId}`, payload)
+    putRequest(`/api/students/response/${params.examId.toLowerCase()}`, payload)
       .then((resp) => {
         console.log(resp);
       })
@@ -114,16 +109,34 @@ export default function Exam() {
   }
 
   function submitExam() {
-    const payload = {
+    setIsLoading(true);
+    const updateResponses = [...responses];
+    const checkIndex = updateResponses.findIndex(
+      (resp) => resp.questionID === examData.questions[questionIterator].question_id
+    );
+    if (checkIndex === -1) {
+      updateResponses.push({
+        QuestionID: examData.questions[questionIterator].question_id,
+        response: tempResponse,
+      });
+    } else {
+      updateResponses[checkIndex] = {
+        QuestionID: examData.questions[questionIterator].question_id,
+        response: tempResponse,
+      };
+    }
+    console.log(updateResponses);
+    let payload = {
       student_username: "cp99says",
-      answers: responses,
+      answers: updateResponses,
     };
-    putRequest(`/api/students/response/${params.examId}`, payload)
+    putRequest(`/api/students/response/${params.examId.toLowerCase()}`, payload)
       .then((resp) => {
         console.log(resp);
       })
       .catch((err) => console.log(err))
       .finally(() => {
+        setIsLoading(false);
         history.push("/dashboard/start");
       });
   }
@@ -166,14 +179,16 @@ export default function Exam() {
                   backgroundColor={colors.GREEN}
                   width="100px"
                 /> */}
-              <Button
-                name="NEXT"
-                type="submit"
-                form="response"
-                onClick={changeQues.bind(this, "next")}
-                backgroundColor={colors.GREEN}
-                width="100px"
-              />
+              {examData.questions.length - questionIterator === 1 ? null : (
+                <Button
+                  name="NEXT"
+                  type="submit"
+                  form="response"
+                  onClick={changeQues.bind(this, "next")}
+                  backgroundColor={colors.GREEN}
+                  width="100px"
+                />
+              )}
             </div>
             <Button
               onClick={toggleConfirmationModal}
