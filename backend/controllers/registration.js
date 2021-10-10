@@ -66,6 +66,7 @@ exports.teacher_login = async (req, res, next) => {
     });
   }
   var data = await teacher.find({ email: email });
+  console.log(data);
   if (data.length == 0) {
     return res.json({
       status: "failure",
@@ -128,7 +129,7 @@ exports.student_login = async (req, res, next) => {
       {
         username: data[0].username,
         email: data[0].email,
-        teacher_id: data[0].teacher_id,
+        student_id: data[0].student_id,
       },
       "qwertop098",
       { expiresIn: "4h" }
