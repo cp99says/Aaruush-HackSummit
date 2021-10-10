@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Exam.module.scss";
 
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import { Clock } from "react-feather";
 import Webcam from "react-webcam";
 import Button from "components/shared/Button";
 
 import { colors } from "components/shared/colors";
-import { getRequest } from "utils/requests";
+import { getRequest, putRequest } from "utils/requests";
 import Timer from "./Timer";
+import Preloader from "components/shared/Preloader";
+import Modal from "components/shared/Modal";
 
 export default function Exam() {
   const [examData, setExamData] = useState(null);
@@ -17,11 +19,18 @@ export default function Exam() {
   const [responses, setResponses] = useState([]);
   const [showResponse, setShowResponse] = useState(null);
   const [tempResponse, setTempResponse] = useState("");
+  const [isModal, setIsModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const responseRef = useRef();
   const params = useParams();
+  const history = useHistory();
 
   const time = new Date();
   time.setSeconds(time.getSeconds() + 3600);
+
+  function toggleConfirmationModal() {
+    setIsModal((prev) => !prev);
+  }
 
   function changeQues(action) {
     console.log(questionIterator);
@@ -50,18 +59,6 @@ export default function Exam() {
           setShowResponse(responses[questionIterator].response);
         }
         setQuestionIterator((prev) => {
-          // if (responses[prev]) {
-          //   setShowResponse(responses[prev].response);
-          // } else {
-          //   setShowResponse(null);
-          // }
-          if (prev === 0 && responses[prev]) {
-            setShowResponse(responses[prev].response);
-          } else if (responses[prev + 1]) {
-            setShowResponse(responses[prev + 1].response);
-          } else {
-            setShowResponse(null);
-          }
           return prev + 1;
         });
         break;
@@ -76,7 +73,10 @@ export default function Exam() {
         console.log(resp);
         setExamData(resp.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   function handleResponseChange(e) {
@@ -91,77 +91,120 @@ export default function Exam() {
     );
     if (checkIndex === -1) {
       updateResponses.push({
-        questionID: examData.questions[questionIterator].question_id,
+        QuestionID: examData.questions[questionIterator].question_id,
         response: tempResponse,
       });
     } else {
       updateResponses[checkIndex] = {
-        questionID: examData.questions[questionIterator].question_id,
+        QuestionID: examData.questions[questionIterator].question_id,
         response: tempResponse,
       };
     }
     console.log(updateResponses);
+    let payload = {
+      student_username: "cp99says",
+      answers: updateResponses,
+    };
+    putRequest(`/api/students/response/${params.examId}`, payload)
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((err) => console.log(err));
     setResponses(updateResponses);
+  }
+
+  function submitExam() {
+    const payload = {
+      student_username: "cp99says",
+      answers: responses,
+    };
+    putRequest(`/api/students/response/${params.examId}`, payload)
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => {
+        history.push("/dashboard/start");
+      });
   }
 
   useEffect(() => {
     getExamData();
   }, []);
 
-  return (
-    examData && (
-      <div className={styles.wrapper}>
-        <div className={styles.globalTimer}>
-          <Timer expiryTimestamp={time} />
-        </div>
-        <div className={styles.examContainer}>
-          <div className={styles.exam}>
-            <div className={styles.questionContainer}>
-              <p>
-                Q{questionIterator + 1}) {examData.questions[questionIterator].question}
-              </p>
-            </div>
-            <div className={styles.answerInput}>
-              <form
-                ref={responseRef}
-                id="response"
-                onChange={handleResponseChange}
-                onSubmit={handleResponseSubmit}
-              >
-                <textarea
-                  name="answer"
-                  defaultValue={showResponse ? showResponse : null}
-                  placeholder="Type your answer here..."
-                ></textarea>
-              </form>
-            </div>
-            <div className={styles.controllers}>
-              <div className={styles.navigators}>
-                <Button
+  return examData && !isLoading ? (
+    <div className={styles.wrapper}>
+      <div className={styles.globalTimer}>
+        <Timer expiryTimestamp={time} />
+      </div>
+      <div className={styles.examContainer}>
+        <div className={styles.exam}>
+          <div className={styles.questionContainer}>
+            <p>
+              Q{questionIterator + 1}) {examData.questions[questionIterator].question}
+            </p>
+          </div>
+          <div className={styles.answerInput}>
+            <form
+              ref={responseRef}
+              id="response"
+              onChange={handleResponseChange}
+              onSubmit={handleResponseSubmit}
+            >
+              <textarea
+                name="answer"
+                defaultValue={showResponse ? showResponse : null}
+                placeholder="Type your answer here..."
+              ></textarea>
+            </form>
+          </div>
+          <div className={styles.controllers}>
+            <div className={styles.navigators}>
+              {/* <Button
                   name="PREV"
                   onClick={changeQues.bind(this, "prev")}
                   backgroundColor={colors.GREEN}
                   width="100px"
-                />
-                <Button
-                  name="NEXT"
-                  type="submit"
-                  form="response"
-                  onClick={changeQues.bind(this, "next")}
-                  backgroundColor={colors.GREEN}
-                  width="100px"
-                />
-              </div>
-              <Button name="END EXAM" backgroundColor={colors.ORANGE} width="150px" />
+                /> */}
+              <Button
+                name="NEXT"
+                type="submit"
+                form="response"
+                onClick={changeQues.bind(this, "next")}
+                backgroundColor={colors.GREEN}
+                width="100px"
+              />
             </div>
+            <Button
+              onClick={toggleConfirmationModal}
+              name="END EXAM"
+              backgroundColor={colors.ORANGE}
+              width="150px"
+            />
           </div>
-          <div className={styles.monitoring}>
-            <div className={styles.camera}>
-              <Webcam mirrored />
-            </div>
+        </div>
+        <div className={styles.monitoring}>
+          <div className={styles.camera}>
+            <Webcam mirrored />
           </div>
         </div>
       </div>
-    )
+      <Modal isOpen={isModal} title="Submit Exam?" onClose={toggleConfirmationModal}>
+        <div className={styles.submitModal}>
+          <p>Are you sure you want to submit your exam?</p>
+          <div className={styles.controllers}>
+            <Button
+              onClick={toggleConfirmationModal}
+              name="No"
+              backgroundColor={colors.GREEN}
+              width="150px"
+            />
+            <Button onClick={submitExam} name="Yes" backgroundColor={colors.ORANGE} width="150px" />
+          </div>
+        </div>
+      </Modal>
+    </div>
+  ) : (
+    <Preloader />
   );
 }
