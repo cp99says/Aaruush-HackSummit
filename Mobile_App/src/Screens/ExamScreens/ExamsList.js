@@ -42,7 +42,7 @@ function ExamList({navigation}) {
                 },
                 {type: "ML"}
             );
-            // console.log("data.data", data.data)
+            console.log("data.data", data);
 
             if (data.status == 404) {
                 setAllExamData([]);
@@ -102,11 +102,11 @@ function ExamList({navigation}) {
                         style={{
                             fontFamily: "Montserrat-Medium",
                             color: COLORS.PURPLE,
-                            fontSize: 14,
+                            fontSize: 12.5,
                             textTransform: "uppercase",
                         }}
                     >
-                        {item.exam_topic}
+                        {item.topic_name}
                     </Text>
                 </View>
                 <View style={{flex: 1, marginTop: "10%"}}>
