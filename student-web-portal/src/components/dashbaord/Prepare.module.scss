@@ -3,6 +3,11 @@
     max-width: 800px;
     padding-top: 60px;
     padding-left: 20px;
+    height: 100%;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
     .uploader {
         cursor: pointer;
         height: 60px;
