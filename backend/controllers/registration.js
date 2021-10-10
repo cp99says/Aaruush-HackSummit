@@ -11,16 +11,20 @@ exports.registration = async (req, res) => {
     const salt = await bcrypt.genSalt(12);
     const nanoid = customAlphabet("1234567890abcdef", 10);
     const hashedPassword = await bcrypt.hash(req.query.password, salt);
+    var nano = nanoid();
     const data = new teacher({
       username: username,
       email: email,
-      teacher_id: nanoid(),
+      teacher_id: nano,
       password: hashedPassword,
     });
     const teacher_data = await data.save();
     res.status(201).json({
       status: "success",
       message: `teacher created with username ${req.query.username}`,
+      username: username,
+      email: email,
+      teacher_id: nano,
     });
   } catch (error) {
     res.send(error);
@@ -34,6 +38,7 @@ exports.student_registration = async (req, res) => {
     const salt = await bcrypt.genSalt(12);
     const nanoid = customAlphabet("1234567890abcdef", 10);
     const hashedPassword = await bcrypt.hash(req.query.password, salt);
+    var nano = nanoid();
     const data = new student({
       username: username,
       email: email,
@@ -44,6 +49,9 @@ exports.student_registration = async (req, res) => {
     res.status(201).json({
       status: "success",
       message: `teacher created with username ${req.query.username}`,
+      username: username,
+      email: email,
+      student_id: nano,
     });
   } catch (error) {
     res.send(error);
