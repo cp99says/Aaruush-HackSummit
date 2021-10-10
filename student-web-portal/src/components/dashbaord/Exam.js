@@ -71,7 +71,7 @@ export default function Exam() {
   }
 
   function getExamData() {
-    getRequest(`/api/students/examination/${params.examId}`)
+    getRequest(`/api/students/examination/${params.examId.toLowerCase()}`)
       .then((resp) => {
         console.log(resp);
         setExamData(resp.data);
