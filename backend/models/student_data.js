@@ -3,7 +3,6 @@ const schema = mongoose.Schema({
   username: {
     unique: true,
     required: true,
-
     type: String,
   },
   email: {
@@ -11,7 +10,7 @@ const schema = mongoose.Schema({
     required: true,
     type: String,
   },
-  teacher_id: {
+  student_id: {
     required: true,
     type: String,
   },
@@ -21,4 +20,4 @@ const schema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Teacher Data", schema);
+module.exports = mongoose.model("Student Data", schema);
