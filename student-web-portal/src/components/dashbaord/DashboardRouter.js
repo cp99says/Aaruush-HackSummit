@@ -8,7 +8,7 @@ export default function DashboardRouter() {
   return (
     <Switch>
       <Route exact path="/dashboard/start" component={StartExam} />
-      <Route exact path="/dashboard/exam" component={Exam} />
+      <Route exact path="/dashboard/exam/:examId" component={Exam} />
     </Switch>
   );
 }
