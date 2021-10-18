@@ -12,7 +12,7 @@ from flashtext import KeywordProcessor
 import motor.motor_asyncio
 from dotenv import load_dotenv
 from utils.img2text import convert_img2text
-from utils.load_models import *
+from load_models import *
 import uuid 
 import random
 import datetime 
@@ -46,7 +46,6 @@ class ResponseSchema(BaseModel):
     
 
 app = APIRouter()
-
 
 @app.post('/keytopics', status_code = 200)
 async def getkeytopics(img_details: Upload_Object):
@@ -85,6 +84,7 @@ async def getkeytopics(img_details: Upload_Object):
     sentences = tokenize_sentences(img_text)
     keyword_sentence_mapping = get_sentences_for_keyword(keyphrases, sentences)
     return keyword_sentence_mapping
+
 
 @app.get('/examination/{code}')
 async def get_questions(code: str):
