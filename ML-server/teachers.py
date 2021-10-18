@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from utils.img2text import convert_img2text
 from utils.similarity import *
 from bson import ObjectId
-from utils.load_models import *
+from load_models import *
 import uuid 
 import random
 import datetime
@@ -47,6 +47,7 @@ class ExamSchema(BaseModel):
     questions : list
 
 # class MarksSchema(BaseModel):
+        
 
 app = APIRouter()
 
@@ -86,49 +87,54 @@ async def start_exam(teacher_id: str, img_details: Upload_Object):
     Used by the teachers to start an exam. Post the link to the s3 object(image) and Qs will
     be generated and stored in the db. Returns the exam code. We use this exam code to check the Qs generated
     '''
-    img_text = convert_img2text(img_details.blob_url)    
-    question_count = img_details.question_count 
-    qa = ques_ans_gen(img_text)
-    if question_count < len(qa):
-        qa = random.sample(qa, question_count)
-    final_dict = {}
-    response_dict = {}
-    date_object = datetime.date.today()
-    final_dict["exam_code"] = str(uuid.uuid1())[:5]
-    for text in qa:
-        text['question_id'] = str(random.randint(10000,99999))
-        text['answer_key_id'] = text['question_id'] + final_dict['exam_code']
-        text['answer'] = text['answer'][6:]
+    try:
+        img_text = convert_img2text(img_details.blob_url)
+        if not img_text: 
+            return {'status': 404, "message": "Text details could not be extracted"}
+        question_count = img_details.question_count 
+        qa = ques_ans_gen(img_text)
+        if question_count < len(qa):
+            qa = random.sample(qa, question_count)
+        final_dict = {}
+        response_dict = {}
+        date_object = datetime.date.today()
+        final_dict["exam_code"] = str(uuid.uuid1())[:5]
+        for text in qa:
+            text['question_id'] = str(random.randint(10000,99999))
+            text['answer_key_id'] = text['question_id'] + final_dict['exam_code']
+            text['answer'] = text['answer'][6:]
+            
+        final_dict["exam_started"] = False
+        final_dict['subject'] = img_details.subject.lower()
+        final_dict['topic_name'] = img_details.topic_name
+        final_dict["teacher_id"] = teacher_id
+        final_dict["total_questions"] = len(qa)
+        final_dict["exam_type"] = "subjective"
+
+        response_dict = {}
+        response_dict['exam_code'] = final_dict["exam_code"]
+        response_dict['teacher_id'] = final_dict["teacher_id"]
+        response_dict['exam_date'] = str(date_object)
+        response_dict['response'] = []
+
+        marks_dict = {'teacher_id': final_dict["teacher_id"],
+        'exam_code': final_dict["exam_code"],
+        'student_grades': []
+        }
+
+        for text in qa:
+            text["question_id"] = str(random.randint(10000,99999))
+            text["answer_key_id"] = text["question_id"] + final_dict["exam_code"]
+            text["answer"] = text["answer"]
         
-    final_dict["exam_started"] = False
-    final_dict['exam_topic'] = img_details.subject.lower()
-    final_dict['topic_name'] = img_details.topic_name
-    final_dict["teacher_id"] = teacher_id
-    final_dict["total_questions"] = len(qa)
-    final_dict["exam_type"] = "subjective"
-
-    response_dict = {}
-    response_dict['exam_code'] = final_dict["exam_code"]
-    response_dict['teacher_id'] = final_dict["teacher_id"]
-    response_dict['exam_date'] = str(date_object)
-    response_dict['response'] = []
-
-    marks_dict = {'teacher_id': final_dict["teacher_id"],
-    'exam_code': final_dict["exam_code"],
-    'student_grades': []
-    }
-
-    for text in qa:
-        text["question_id"] = str(random.randint(10000,99999))
-        text["answer_key_id"] = text["question_id"] + final_dict["exam_code"]
-        text["answer"] = text["answer"]
-    
-    final_dict["questions"] = qa
-    exam_insert = await exam.insert_one(final_dict)
-    response_insert = await response.insert_one(response_dict)
-    marks_insert = await marks.insert_one(marks_dict)
-    
-    return {"status": 201, 'exam_code': final_dict['exam_code']}
+        final_dict["questions"] = qa
+        exam_insert = await exam.insert_one(final_dict)
+        response_insert = await response.insert_one(response_dict)
+        marks_insert = await marks.insert_one(marks_dict)
+        
+        return {"status": 201, 'exam_code': final_dict['exam_code']}
+    except Exception as e:
+        return {'status': 404, "message": "Text details could not be extracted"}
 
 @app.patch('/exam/{code}')
 async def update_exam(code: str, examschema: ExamSchema):
@@ -217,10 +223,10 @@ async def get_exam_score(code: str):
     return {'status': 404, "message": "Exam details not found"}
 
 
-@app.get('/exam/subjectwise/{subject}')
-async def get_exam_subject_wise(subject: str):
+@app.get('/exam/subjectwise/{subject}/{teacher_id}')
+async def get_exam_subject_wise(subject: str, teacher_id: str):
     exam_list = []
-    exam_details = exam.find({'subject': subject.lower()},{'_id': 0})
+    exam_details = exam.find({'subject': subject.lower(), 'teacher_id': teacher_id},{'_id': 0})
     async for exam_detail in exam_details:
         exam_list.append(exam_detail)        
     if not exam_list:
