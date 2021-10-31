@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-app.use(express.json());
 const cors = require("cors");
 const mongoose = require("mongoose");
 mongoose.connect(
@@ -14,10 +13,16 @@ mongoose.connect(
   }
 );
 
+app.use(express.json());
 app.use(cors());
+
 app.get("/", (req, res) => {
-  res.send("server is up at AZURE!!");
+  res.send({
+    success:true,
+    _msg:"successfully running"
+  });
 });
+
 const api = require("./controllers/uploader");
 const routes = require("./routes/routes");
 app.use("/api", routes);
