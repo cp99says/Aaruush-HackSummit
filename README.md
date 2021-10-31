@@ -62,7 +62,7 @@
 </div><br>
 
  ```
- Fork The Repository ✅
+ Fork The Repository 🔃
  
  $ git clone https://github.com/<username>/Pariksha.git   
 ```
