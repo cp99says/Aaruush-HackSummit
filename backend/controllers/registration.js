@@ -32,12 +32,13 @@ exports.registration = async (req, res) => {
 };
 
 exports.student_registration = async (req, res) => {
+  cons {username, email, password} = req.query;
   try {
-    const username = req.query.username;
-    const email = req.query.email;
+    const username = username;
+    const email = email;
     const salt = await bcrypt.genSalt(12);
     const nanoid = customAlphabet("1234567890abcdef", 10);
-    const hashedPassword = await bcrypt.hash(req.query.password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
     var nano = nanoid();
     const data = new student({
       username: username,
