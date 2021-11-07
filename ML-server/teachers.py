@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from utils.img2text import convert_img2text
 from utils.similarity import *
 from bson import ObjectId
-# from utils.load_models import *
+from utils.load_models import *
 import uuid 
 import random
 import datetime
