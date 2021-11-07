@@ -1,7 +1,11 @@
-from thefuzz import fuzz
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 def similarity(original, response):
-    return fuzz.token_sort_ratio(original, response)/10
+    set_ratio = fuzz.token_set_ratio(original.lower(), response.lower())
+    partial_ratio = fuzz.partial_ratio(original.lower(), response.lower())
+
+    return (set_ratio + partial_ratio)/20
 
 def match_answer(es, response, qid):    
     for e in es:

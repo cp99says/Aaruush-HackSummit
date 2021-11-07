@@ -3,14 +3,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from thefuzz import fuzz
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 from typing import *
 import motor.motor_asyncio
 from dotenv import load_dotenv
 from utils.img2text import convert_img2text
 from utils.similarity import *
 from bson import ObjectId
-from load_models import *
+# from utils.load_models import *
 import uuid 
 import random
 import datetime

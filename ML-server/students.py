@@ -1,4 +1,4 @@
-from utils.transformer_src import *
+# from utils.transformer_src import *
 from fastapi import APIRouter, Depends, HTTPException, Response, Request, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -12,7 +12,7 @@ from flashtext import KeywordProcessor
 import motor.motor_asyncio
 from dotenv import load_dotenv
 from utils.img2text import convert_img2text
-from load_models import *
+# from utils.load_models import *
 import uuid 
 import random
 import datetime 
@@ -54,11 +54,11 @@ async def getkeytopics(img_details: Upload_Object):
     extractor.load_document(input=img_text, language='en_core_web_sm')
     extractor.candidate_selection()
     extractor.candidate_weighting()
-    keyphrases = extractor.get_n_best(n=10)
+    keyphrases = extractor.get_n_best(n=5)
     keyphrases = [keyphrase[0] for keyphrase in keyphrases]
     
 
-    def tokenize_sentences(text):
+    def tokenize_sentences(text): 
         sentences = [sent_tokenize(text)]
         sentences = [y for x in sentences for y in x]
         sentences = [sentence.strip() for sentence in sentences if len(sentence) > 20]
@@ -70,16 +70,24 @@ async def getkeytopics(img_details: Upload_Object):
         for word in keywords:
             keyword_sentences[word] = []
             keyword_processor.add_keyword(word)
+        added_sen = []
         for sentence in sentences:
             keywords_found = keyword_processor.extract_keywords(sentence)
             for key in keywords_found:
-                keyword_sentences[key].append(sentence)
+                if sentence not in added_sen:
+                    keyword_sentences[key].append(sentence)
+                    added_sen.append(sentence)
+
 
         for key in keyword_sentences.keys():
             values = keyword_sentences[key]
             values = sorted(values, key=len, reverse=True)
             keyword_sentences[key] = values
-        return keyword_sentences
+        res = {}
+        for k,v in keyword_sentences.items():
+            if v:
+                res[k] = v
+        return res
 
     sentences = tokenize_sentences(img_text)
     keyword_sentence_mapping = get_sentences_for_keyword(keyphrases, sentences)
